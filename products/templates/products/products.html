@@ -7,36 +7,53 @@
         <h1>Shop all products</h1>
         <p>Find your next everyday favorite.</p>
     </header>
+    <div class="activity-bar">
+        <form method="GET">
+            <label for="search">search</label>
+            <input type="search" name="search" id="search" class="search-bar">
+            <select name="category" id="category">
+                <option value="">All</option>
+                {% for category in categories %}
+                <option value="{{ category }}" 
+                {% if request.GET.category == category %} selected {% endif %}>
+                {{category}}
+            </option>
+            {% endfor %}
+        </select>
+        <button type="submit">search </button>
+        </form>
+    </div>
 
     {% if products %}
     <section class="product-grid" aria-label="Products">
         {% for product in products %}
         <a class="item-click" href="{% url 'product_details' product.pk %}">
-        <article class="product-card">
-            <div class="product-image">
-                {% if product.image %}
-                <img src="{{ product.image.url }}" alt="{{ product.name }}">
-                {% else %}
-                <div class="product-image-placeholder" aria-label="No image available">
-                    <span>{{ product.get_category_display }}</span>
+            <article class="product-card">
+                <div class="product-image">
+                    {% if product.image %}
+                    <img src="{{ product.image.url }}" alt="{{ product.name }}">
+                    {% else %}
+                    <div class="product-image-placeholder" aria-label="No image available">
+                        <span>{{ product.get_category_display }}</span>
+                    </div>
+                    {% endif %}
                 </div>
-                {% endif %}
-            </div>
 
-            <div class="product-info">
-                <p class="product-category">{{ product.get_category_display }}</p>
-                <h2 class="product-name">{{ product.name }}</h2>
-                <p class="product-variant">Color: {{ product.color }} <span aria-hidden="true">·</span> Size: {{ product.get_size_display }}</p>
-                <div class="product-price">
-                    <span class="current-price">₹{{ product.price }}</span>
+                <div class="product-info">
+                    <p class="product-category">{{ product.get_category_display }}</p>
+                    <h2 class="product-name">{{ product.name | truncatechars:30 }}</h2>
+                    <p class="product-variant">Color: {{ product.color }} <span aria-hidden="true">·
+                    </span> Size: {{product.get_size_display }}</p>
+                    <div class="product-price">
+                        <span class="current-price">₹{{ product.price }}</span>
+                    </div>
+                    {% if product.stock > 0 %}
+                    <p class="product-availability">In stock</p>
+                    {% else %}
+                    <p class="product-availability product-availability--out">Out of stock</p>
+                    {% endif %}
                 </div>
-                {% if product.stock > 0 %}
-                <p class="product-availability">In stock</p>
-                {% else %}
-                <p class="product-availability product-availability--out">Out of stock</p>
-                {% endif %}
-            </div>
-        </article>
+            </article>
         </a>
         {% endfor %}
     </section>
