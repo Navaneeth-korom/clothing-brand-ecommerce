@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="registration-container">
+    <h2>Create Account</h2>
+
+    <form action="#" method="post">
+
+        <div class="form-group">
+            <label for="username">Username</label>
+            <input type="text" id="username" name="username" placeholder="Enter your username" required
+                autocomplete="username" value="{{ request.POST.username }}">
+        </div>
+
+        <div class="form-group">
+            <label for="email">Email Address</label>
+            <input type="email" id="email" name="email" placeholder="Enter your email" required 
+                autocomplete="email" value="{{ request.POST.email }}">
+        </div>
+
+        <div class="form-group">
+            <label for="phone">Phone Number</label>
+            <input type="tel" id="phone" name="phone" placeholder="Enter your phone number" required 
+            autocomplete="tel" value="{{ request.POST.phone }}">
+        </div>
+
+        <div class="form-group">
+            <label for="password1">Password</label>
+            <input type="password" id="password1" name="password1" placeholder="Create a password" required
+             value="{{ request.POST.password1 }}">
+        </div>
+
+        <div class="form-group">
+            <label for="password2">Confirm Password</label>
+            <input type="password" id="password2" name="password2" placeholder="Confirm your password"
+                required value="{{ request.POST.password2 }}">
+        </div>
+
+        <button type="submit" class="register-btn">
+            Register
+        </button>
+
+        <p class="login-link">
+            Already have an account?
+            <a href="">Login</a>
+        </p>
+
+    </form>
+</div>
+{% endblock %}
