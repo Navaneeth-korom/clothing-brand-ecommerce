@@ -1,12 +1,14 @@
 from django.shortcuts import render, redirect
 from .forms import RegisterForm
+from django.contrib.auth import login
 
 # Create your views here.
 def register(request):
     if request.method == "POST":
         form = RegisterForm(request.POST)
         if form.is_valid():
-            form.save()
+            user = form.save()
+            login(request, user)
             return redirect("products")
     else:
         form = RegisterForm()
