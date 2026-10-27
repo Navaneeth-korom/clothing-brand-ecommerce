@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+
+{% block content %}
+<main class="products-page">
+    <header class="products-header">
+        <p class="products-eyebrow">The collection</p>
+        <h1>Shop all products</h1>
+        <p>Find your next everyday favorite.</p>
+    </header>
+
+    {% if products %}
+    <section class="product-grid" aria-label="Products">
+        {% for product in products %}
+        <article class="product-card">
+            <div class="product-image">
+                {% if product.image %}
+                <img src="{{ product.image.url }}" alt="{{ product.name }}">
+                {% else %}
+                <div class="product-image-placeholder" aria-label="No image available">
+                    <span>{{ product.get_category_display }}</span>
+                </div>
+                {% endif %}
+            </div>
+
+            <div class="product-info">
+                <p class="product-category">{{ product.get_category_display }}</p>
+                <h2 class="product-name">{{ product.name }}</h2>
+                <p class="product-variant">Color: {{ product.color }} <span aria-hidden="true">·</span> Size: {{ product.get_size_display }}</p>
+                <div class="product-price">
+                    <span class="current-price">₹{{ product.price }}</span>
+                </div>
+                {% if product.stock > 0 %}
+                <p class="product-availability">In stock</p>
+                {% else %}
+                <p class="product-availability product-availability--out">Out of stock</p>
+                {% endif %}
+            </div>
+        </article>
+        {% endfor %}
+    </section>
+    {% else %}
+    <p class="products-empty">There are no products to show right now. Please check back soon.</p>
+    {% endif %}
+</main>
+{% endblock %}
