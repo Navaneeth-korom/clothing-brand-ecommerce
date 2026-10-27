@@ -23,6 +23,17 @@ nav ul {
   color: black;
 }
 
+.auth-button{
+    background-color: #3a7ca5;
+    color: white;
+    padding: 10px 20px;
+}
+.logout-btn{
+    background-color: #d64045;
+    color: white;
+    padding: 10px 20px;
+}
+
 /* Hero section */
 
 .hero-section {
@@ -251,11 +262,10 @@ nav ul {
 
 /* Register form */
 
-.registration-section{
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    
+.registration-section {
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .registration-container {
@@ -330,8 +340,83 @@ input:focus {
 }
 
 .error {
-    color: #dc3545;
-    font-size: 13px;
-    margin-top: 5px;
-    margin-bottom: 10px;
+  color: #dc3545;
+  font-size: 13px;
+  margin-top: 5px;
+  margin-bottom: 10px;
+}
+
+/* Login */
+
+.login-container {
+  max-width: 400px;
+  margin: 60px auto;
+  padding: 30px;
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+}
+
+.login-container h2 {
+  text-align: center;
+  margin-bottom: 25px;
+  color: #222;
+}
+
+.form-group {
+  margin-bottom: 20px;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: 600;
+  color: #333;
+}
+
+.form-group input {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 14px;
+  box-sizing: border-box;
+}
+
+.form-group input:focus {
+  outline: none;
+  border-color: #222;
+}
+
+.login-btn {
+  width: 100%;
+  padding: 12px;
+  background: #222;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+.login-btn:hover {
+  background: #444;
+}
+
+.error-message {
+  color: #dc3545;
+  font-size: 14px;
+  margin-bottom: 15px;
+}
+
+.register-link {
+  text-align: center;
+  margin-top: 20px;
+  font-size: 14px;
+}
+
+.register-link a {
+  color: #222;
+  font-weight: bold;
+  text-decoration: none;
 }
