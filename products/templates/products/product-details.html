@@ -35,7 +35,7 @@
         </div>
 
         {% if product.stock > 0 %}
-            <form method="POST" action="#">
+            <form method="POST" action="{% url 'add_to_cart' product.id %}">
                 {% csrf_token %}
 
                 <label for="quantity">Quantity</label>
@@ -48,8 +48,9 @@
                     max="{{ product.stock }}"
                     required
                 >
-
-                <a class="buy-now" href="">Buy Now</a>
+                <button type="submit" class="buy-now">
+                    Buy Now
+                </button>
             </form>
         {% else %}
             <button class="buy-now" disabled>
