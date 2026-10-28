@@ -8,7 +8,7 @@ from products.models import Product
 @login_required
 def add_to_cart(request, product_id):
     if request.method != "POST":
-        return redirect("product_detail", pk=product_id)
+        return redirect("product_details", pk=product_id)
 
     product = get_object_or_404(
         Product,
@@ -19,12 +19,12 @@ def add_to_cart(request, product_id):
     try:
         quantity = int(request.POST.get("quantity", 1))
     except (TypeError, ValueError):
-        messages.error(request, "Please enter a valid quantity.")
-        return redirect("product_detail", pk=product_id)
+        messages.error(request, "Please enter a valid quantity.", extra_tags="product")
+        return redirect("product_details", pk=product_id)
 
     if quantity < 1:
-        messages.error(request, "Quantity must be at least 1.")
-        return redirect("product_detail", pk=product_id)
+        messages.error(request, "Quantity must be at least 1.", extra_tags="product")
+        return redirect("product_details", pk=product_id)
 
     cart, created = Cart.objects.get_or_create(user=request.user)
 
@@ -37,8 +37,8 @@ def add_to_cart(request, product_id):
     new_quantity = existing_quantity + quantity
 
     if new_quantity > product.stock:
-        messages.error(request, "Unavailable quantity.")
-        return redirect("product_detail", pk=product_id)
+        messages.error(request, "Unavailable quantity.", extra_tags="product")
+        return redirect("product_details", pk=product_id)
 
     if cart_item:
         cart_item.quantity = new_quantity
@@ -50,7 +50,7 @@ def add_to_cart(request, product_id):
             quantity=quantity
         )
 
-    messages.success(request, f"{product.name} added to cart.")
+    messages.success(request, f"{product.name} added to cart.", extra_tags="cart")
     return redirect("cart")
 
 @login_required
@@ -76,17 +76,21 @@ def update_cart(request, product_id):
     try:
         quantity = int(request.POST.get("quantity", 1))
     except (TypeError, ValueError):
-        messages.error(request, "Please enter a valid quantity.")
+        messages.error(request, "Please enter a valid quantity.", extra_tags="cart")
         return redirect("cart")
 
     if quantity < 1:
-        messages.error(request, "Quantity must be at least 1.")
+        messages.error(request, "Quantity must be at least 1.", extra_tags="cart")
     elif quantity > cart_item.product.stock:
-        messages.error(request, "Requested quantity exceeds available stock.")
+        messages.error(
+            request,
+            "Requested quantity exceeds available stock.",
+            extra_tags="cart",
+        )
     else:
         cart_item.quantity = quantity
         cart_item.save()
-        messages.success(request, "Cart quantity updated.")
+        messages.success(request, "Cart quantity updated.", extra_tags="cart")
     return redirect("cart")
 
 
@@ -99,5 +103,9 @@ def remove_from_cart(request, product_id):
     cart_item = get_object_or_404(CartItem, cart=cart, product_id=product_id)
     product_name = cart_item.product.name
     cart_item.delete()
-    messages.success(request, f"{product_name} removed from your cart.")
+    messages.success(
+        request,
+        f"{product_name} removed from your cart.",
+        extra_tags="cart",
+    )
     return redirect("cart")

@@ -10,6 +10,12 @@
         <p>Review the pieces you have chosen.</p>
     </header>
 
+    {% for message in messages %}
+        {% if "cart" in message.tags %}
+        <p class="page-message {{ message.level_tag }}" role="status">{{ message }}</p>
+        {% endif %}
+    {% endfor %}
+
     {% if cart_items %}
     <div class="cart-layout">
         <section class="cart-items" aria-label="Items in your cart">

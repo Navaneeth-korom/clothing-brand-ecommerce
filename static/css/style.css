@@ -392,6 +392,31 @@ input:focus {
   margin-bottom: 15px;
 }
 
+.page-message {
+  margin: 0 0 18px;
+  padding: 12px 16px;
+  border: 1px solid #d8d5cf;
+  background: #faf9f7;
+  color: #444;
+  font-size: 14px;
+}
+
+.page-message.error {
+  border-color: #f1c3c6;
+  background: #fff5f5;
+  color: #b4232f;
+}
+
+.page-message.success {
+  border-color: #b8ddc4;
+  background: #f2fbf5;
+  color: #236b3b;
+}
+
+.product-detail > .page-message {
+  grid-column: 1 / -1;
+}
+
 .register-link {
   text-align: center;
   margin-top: 20px;

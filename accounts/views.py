@@ -27,7 +27,7 @@ def user_login(request):
             login(request, user)
             return redirect("products")
         else:
-            messages.error(request, "Invalid credentials")
+            messages.error(request, "Invalid credentials", extra_tags="login")
     return render(request, "accounts/login.html")
 
 def user_logout(request):

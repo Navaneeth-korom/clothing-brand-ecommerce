@@ -3,6 +3,12 @@
 {% block title %}{{ product.name }} | Clothing Brand{% endblock %}
 {% block content %}
 <section class="product-detail">
+    {% for message in messages %}
+        {% if "product" in message.tags %}
+        <p class="page-message {{ message.level_tag }}" role="alert">{{ message }}</p>
+        {% endif %}
+    {% endfor %}
+
     <div class="product-image">
         {% if product.image %}
             <img src="{{ product.image.url }}" alt="{{ product.name }}">
