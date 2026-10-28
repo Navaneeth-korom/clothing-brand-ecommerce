@@ -64,3 +64,40 @@ def view_cart(request):
         "total_amount": total_amount,
     }
     return render(request, "orders/cart.html", context)
+
+
+@login_required
+def update_cart(request, product_id):
+    if request.method != "POST":
+        return redirect("cart")
+
+    cart = get_object_or_404(Cart, user=request.user)
+    cart_item = get_object_or_404(CartItem, cart=cart, product_id=product_id)
+    try:
+        quantity = int(request.POST.get("quantity", 1))
+    except (TypeError, ValueError):
+        messages.error(request, "Please enter a valid quantity.")
+        return redirect("cart")
+
+    if quantity < 1:
+        messages.error(request, "Quantity must be at least 1.")
+    elif quantity > cart_item.product.stock:
+        messages.error(request, "Requested quantity exceeds available stock.")
+    else:
+        cart_item.quantity = quantity
+        cart_item.save()
+        messages.success(request, "Cart quantity updated.")
+    return redirect("cart")
+
+
+@login_required
+def remove_from_cart(request, product_id):
+    if request.method != "POST":
+        return redirect("cart")
+
+    cart = get_object_or_404(Cart, user=request.user)
+    cart_item = get_object_or_404(CartItem, cart=cart, product_id=product_id)
+    product_name = cart_item.product.name
+    cart_item.delete()
+    messages.success(request, f"{product_name} removed from your cart.")
+    return redirect("cart")

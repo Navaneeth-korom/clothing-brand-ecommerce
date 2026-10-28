@@ -26,7 +26,18 @@
                 <div class="cart-item-details">
                     <h3><a href="{% url 'product_details' item.product.pk %}">{{ item.product.name }}</a></h3>
                     <p class="cart-item-price">₹{{ item.product.price }}</p>
-                    <p class="cart-item-quantity">Quantity: {{ item.quantity }}</p>
+                    <div class="cart-item-actions">
+                        <form class="cart-update-form" action="{% url 'update_cart' item.product.pk %}" method="post">
+                            {% csrf_token %}
+                            <label for="quantity-{{ item.pk }}">Quantity</label>
+                            <input id="quantity-{{ item.pk }}" name="quantity" type="number" min="1" max="{{ item.product.stock }}" value="{{ item.quantity }}">
+                            <button type="submit">Update</button>
+                        </form>
+                        <form action="{% url 'remove_from_cart' item.product.pk %}" method="post">
+                            {% csrf_token %}
+                            <button class="cart-remove-button" type="submit">Remove</button>
+                        </form>
+                    </div>
                 </div>
                 <div class="cart-item-subtotal">
                     <span>Subtotal</span>
