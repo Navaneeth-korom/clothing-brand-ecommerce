@@ -3,129 +3,144 @@
 {% block title %}Checkout{% endblock %}
 
 {% block content %}
+<main class="checkout-page">
+    <header class="checkout-header">
+        <p class="checkout-eyebrow">Almost yours</p>
+        <h1>Checkout</h1>
+        <p>Review your items and choose where they should be delivered.</p>
+    </header>
 
-<h1>Checkout</h1>
+    {% if messages %}
+        {% for message in messages %}
+            {% if "checkout" in message.extra_tags %}
+            <p class="page-message {{ message.level_tag }}" role="status">{{ message }}</p>
+            {% endif %}
+        {% endfor %}
+    {% endif %}
 
-{% if messages %}
-{% for message in messages %}
-{% if "checkout" in message.extra_tags %}
-<p style="color: red;">{{ message }}</p>
-{% endif %}
-{% endfor %}
-{% endif %}
+    {% if cart_items %}
+    <div class="checkout-layout">
+        <section class="checkout-card checkout-order" aria-labelledby="checkout-order-title">
+            <div class="checkout-card-heading">
+                <div>
+                    <p class="checkout-step">Step 1</p>
+                    <h2 id="checkout-order-title">Order summary</h2>
+                </div>
+                <span>{{ cart_items|length }} item{{ cart_items|length|pluralize }}</span>
+            </div>
 
-<!-- Order Summary -->
-<h2>Order Summary</h2>
+            <div class="checkout-items">
+                {% for item in cart_items %}
+                <article class="checkout-item">
+                    <div class="checkout-item-image">
+                        {% if item.product.image %}
+                        <img src="{{ item.product.image.url }}" alt="{{ item.product.name }}">
+                        {% else %}
+                        <span>No image</span>
+                        {% endif %}
+                    </div>
+                    <div class="checkout-item-details">
+                        <h3>{{ item.product.name }}</h3>
+                        <p>₹{{ item.product.price|floatformat:2 }}</p>
+                        <span>Quantity: {{ item.quantity }}</span>
+                    </div>
+                    <strong class="checkout-item-subtotal">
+                        ₹{{ item.product.price|floatformat:2 }} × {{ item.quantity }}
+                    </strong>
+                </article>
+                {% endfor %}
+            </div>
 
-{% for item in cart_items %}
-<div>
-    <h3>{{ item.product.name }}</h3>
-    <p>Price: ₹{{ item.product.price|floatformat:2 }}</p>
-    <p>Quantity: {{ item.quantity }}</p>
-    <p>
-        Subtotal:
-        ₹{{ item.product.price|floatformat:2 }} × {{ item.quantity }}
-    </p>
-</div>
-{% empty %}
-<p>Your cart is empty.</p>
-{% endfor %}
+            <div class="checkout-total">
+                <span>Total</span>
+                <strong>₹{{ total|floatformat:2 }}</strong>
+            </div>
+            <a class="checkout-back-link" href="{% url 'cart' %}">Return to cart</a>
+        </section>
 
-<h3>Total: ₹{{ total|floatformat:2 }}</h3>
+        <aside class="checkout-card checkout-delivery" aria-labelledby="checkout-delivery-title">
+            <div class="checkout-card-heading">
+                <div>
+                    <p class="checkout-step">Step 2</p>
+                    <h2 id="checkout-delivery-title">
+                        {% if selected_address %}Review delivery{% else %}Delivery address{% endif %}
+                    </h2>
+                </div>
+            </div>
 
-{% if cart_items %}
+            {% if selected_address %}
+            <div class="checkout-address">
+                <h3>{{ selected_address.full_name }}</h3>
+                <p>{{ selected_address.address_line }}</p>
+                <p>{{ selected_address.city }}, {{ selected_address.state }}</p>
+                <p>Postal code: {{ selected_address.postal_code }}</p>
+            </div>
+            <p class="checkout-hint">Please review your order and delivery address.</p>
+            <form method="POST" action="{% url 'checkout' %}">
+                {% csrf_token %}
+                <input type="hidden" name="confirmed_address_id" value="{{ selected_address.id }}">
+                <button class="checkout-button" type="submit" name="place_order">Place order</button>
+            </form>
+            {% else %}
+            <form class="checkout-address-form" method="POST">
+                {% csrf_token %}
 
-{% if selected_address %}
+                {% if addresses %}
+                <fieldset class="checkout-saved-addresses">
+                    <legend>Choose a saved address</legend>
+                    {% for address in addresses %}
+                    <label class="checkout-address-option">
+                        <input type="radio" name="address_id" value="{{ address.id }}" {% if forloop.first %}checked{% endif %}>
+                        <span>
+                            <strong>{{ address.full_name }}</strong>
+                            <span>{{ address.address_line }}, {{ address.city }}, {{ address.state }} - {{ address.postal_code }}</span>
+                        </span>
+                    </label>
+                    {% endfor %}
+                </fieldset>
+                {% else %}
+                <p class="checkout-hint">You have no saved addresses yet. Enter a delivery address below.</p>
+                {% endif %}
 
-<!-- Confirmed Address and Order Review -->
-<h2>Review Your Order</h2>
+                <label class="checkout-address-option checkout-new-address">
+                    <input type="radio" name="address_id" value="new" {% if not addresses %}checked{% endif %}>
+                    <span><strong>Enter a new address</strong></span>
+                </label>
 
-<h3>Delivery Address</h3>
-<p>{{ selected_address.full_name }}</p>
-<p>{{ selected_address.address_line }}</p>
-<p>{{ selected_address.city }}, {{ selected_address.state }}</p>
-<p>Postal Code: {{ selected_address.postal_code }}</p>
+                <div class="checkout-fields">
+                    <div class="checkout-field">
+                        <label for="full_name">Full name</label>
+                        <input type="text" id="full_name" name="full_name" autocomplete="name">
+                    </div>
+                    <div class="checkout-field">
+                        <label for="address_line">Address</label>
+                        <textarea id="address_line" name="address_line" autocomplete="street-address" rows="3"></textarea>
+                    </div>
+                    <div class="checkout-field">
+                        <label for="city">City</label>
+                        <input type="text" id="city" name="city" autocomplete="address-level2">
+                    </div>
+                    <div class="checkout-field">
+                        <label for="state">State</label>
+                        <input type="text" id="state" name="state" autocomplete="address-level1">
+                    </div>
+                    <div class="checkout-field">
+                        <label for="postal_code">Postal code</label>
+                        <input type="text" id="postal_code" name="postal_code" maxlength="6" autocomplete="postal-code">
+                    </div>
+                </div>
 
-<p>Please review your order and delivery address.</p>
-
-<!-- Place Order will be connected to the order view later -->
-<form method="POST" action="{% url 'checkout' %}">
-    {% csrf_token %}
-    <input type="hidden" name="confirmed_address_id" value="{{ selected_address.id }}">
-    <button type="submit" name="place_order">
-        Place Order
-    </button>
-</form>
-
-{% else %}
-
-<!-- Address Selection Form -->
-<h2>Delivery Address</h2>
-
-<form method="POST">
-    {% csrf_token %}
-
-    <h3>Choose a Saved Address</h3>
-
-    {% for address in addresses %}
-    <div>
-        <label>
-            <input type="radio" name="address_id" value="{{ address.id }}" {%if forloop.first %} checked {% endif %}>
-            {{ address.full_name }},
-            {{ address.address_line }},
-            {{ address.city }},
-            {{ address.state }} -
-            {{ address.postal_code }}
-        </label>
+                <button class="checkout-button" type="submit">Confirm address</button>
+            </form>
+            {% endif %}
+        </aside>
     </div>
-    {% empty %}
-    <p>You have no saved addresses yet.</p>
-    {% endfor %}
-
-    <label>
-        <input type="radio" name="address_id" value="new">
-        Enter a new address
-    </label>
-
-    <p>
-        Leave the saved address unselected to enter a new one.
-    </p>
-
-    <div>
-        <label for="full_name">Full Name</label>
-        <input type="text" id="full_name" name="full_name">
-    </div>
-
-    <div>
-        <label for="address_line">Address</label>
-        <textarea id="address_line" name="address_line"></textarea>
-    </div>
-
-    <div>
-        <label for="city">City</label>
-        <input type="text" id="city" name="city">
-    </div>
-
-    <div>
-        <label for="state">State</label>
-        <input type="text" id="state" name="state">
-    </div>
-
-    <div>
-        <label for="postal_code">Postal Code</label>
-        <input type="text" id="postal_code" name="postal_code" maxlength="6">
-    </div>
-
-    <br>
-
-    <button type="submit">Confirm Address</button>
-</form>
-
-{% endif %}
-
-{% else %}
-<p>Add products to your cart before checking out.</p>
-<a href="{% url 'products' %}">Continue Shopping</a>
-{% endif %}
-
+    {% else %}
+    <section class="checkout-empty">
+        <h2>Your cart is empty</h2>
+        <p>Add a few pieces to your cart before checking out.</p>
+        <a class="checkout-button checkout-empty-link" href="{% url 'products' %}">Continue shopping</a>
+    </section>
+    {% endif %}
+</main>
 {% endblock %}
