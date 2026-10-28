@@ -3,13 +3,59 @@
 {% block title %}Cart{% endblock %}
 
 {% block content %}
-    <h1>Shopping Cart</h1>
-    <ul>
-        {% for item in cart_items %}
-            <li>
-                {{ item.product.name }} - {{ item.product.price }} x {{ item.quantity }}
-            </li>
-        {% endfor %}
-    </ul>
-    <p><strong>Total: {{ total_amount }}</strong></p>
+<main class="cart-page">
+    <header class="cart-header">
+        <p class="cart-eyebrow">Your selection</p>
+        <h1>Shopping Cart</h1>
+        <p>Review the pieces you have chosen.</p>
+    </header>
+
+    {% if cart_items %}
+    <div class="cart-layout">
+        <section class="cart-items" aria-label="Items in your cart">
+            <h2 class="cart-section-title">Your items <span>{{ cart_items|length }} items</span></h2>
+            {% for item in cart_items %}
+            <article class="cart-item">
+                <a class="cart-item-image" href="{% url 'product_details' item.product.pk %}" aria-label="View {{ item.product.name }}">
+                    {% if item.product.image %}
+                    <img src="{{ item.product.image.url }}" alt="{{ item.product.name }}">
+                    {% else %}
+                    <span>Image unavailable</span>
+                    {% endif %}
+                </a>
+                <div class="cart-item-details">
+                    <h3><a href="{% url 'product_details' item.product.pk %}">{{ item.product.name }}</a></h3>
+                    <p class="cart-item-price">₹{{ item.product.price }}</p>
+                    <p class="cart-item-quantity">Quantity: {{ item.quantity }}</p>
+                </div>
+                <div class="cart-item-subtotal">
+                    <span>Subtotal</span>
+                    <strong>₹{{ item.total_price|floatformat:2 }}</strong>
+                </div>
+            </article>
+            {% endfor %}
+            <a class="cart-continue-link" href="{% url 'products' %}">Continue shopping</a>
+        </section>
+
+        <aside class="cart-summary" aria-labelledby="cart-summary-title">
+            <h2 id="cart-summary-title">Order summary</h2>
+            <div class="cart-summary-row">
+                <span>Items ({{ cart_items|length }})</span>
+                <span>₹{{ total_amount|floatformat:2 }}</span>
+            </div>
+            <div class="cart-summary-total">
+                <span>Total</span>
+                <strong>₹{{ total_amount|floatformat:2 }}</strong>
+            </div>
+            <a class="cart-summary-link" href="{% url 'products' %}">Continue shopping</a>
+        </aside>
+    </div>
+    {% else %}
+    <section class="cart-empty">
+        <h2>Your cart is empty</h2>
+        <p>Take a look through the collection and find something you love.</p>
+        <a class="cart-summary-link" href="{% url 'products' %}">Explore the collection</a>
+    </section>
+    {% endif %}
+</main>
 {% endblock %}

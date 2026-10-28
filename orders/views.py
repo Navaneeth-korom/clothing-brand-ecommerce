@@ -5,7 +5,7 @@ from .models import Cart, CartItem
 from products.models import Product
 
 
-
+@login_required
 def add_to_cart(request, product_id):
     if request.method != "POST":
         return redirect("product_detail", pk=product_id)
@@ -53,10 +53,10 @@ def add_to_cart(request, product_id):
     messages.success(request, f"{product.name} added to cart.")
     return redirect("cart")
 
-
+@login_required
 def view_cart(request):
     cart, created = Cart.objects.get_or_create(user=request.user)
-    cart_items = CartItem.objects.filter(cart=cart)
+    cart_items = CartItem.objects.filter(cart=cart).select_related("product")
     total_amount = sum(item.product.price * item.quantity for item in cart_items)
 
     context = {
