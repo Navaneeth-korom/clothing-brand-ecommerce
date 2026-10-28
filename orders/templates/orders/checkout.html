@@ -1,0 +1,131 @@
+{% extends "base.html" %}
+
+{% block title %}Checkout{% endblock %}
+
+{% block content %}
+
+<h1>Checkout</h1>
+
+{% if messages %}
+{% for message in messages %}
+{% if "checkout" in message.extra_tags %}
+<p style="color: red;">{{ message }}</p>
+{% endif %}
+{% endfor %}
+{% endif %}
+
+<!-- Order Summary -->
+<h2>Order Summary</h2>
+
+{% for item in cart_items %}
+<div>
+    <h3>{{ item.product.name }}</h3>
+    <p>Price: ₹{{ item.product.price|floatformat:2 }}</p>
+    <p>Quantity: {{ item.quantity }}</p>
+    <p>
+        Subtotal:
+        ₹{{ item.product.price|floatformat:2 }} × {{ item.quantity }}
+    </p>
+</div>
+{% empty %}
+<p>Your cart is empty.</p>
+{% endfor %}
+
+<h3>Total: ₹{{ total|floatformat:2 }}</h3>
+
+{% if cart_items %}
+
+{% if selected_address %}
+
+<!-- Confirmed Address and Order Review -->
+<h2>Review Your Order</h2>
+
+<h3>Delivery Address</h3>
+<p>{{ selected_address.full_name }}</p>
+<p>{{ selected_address.address_line }}</p>
+<p>{{ selected_address.city }}, {{ selected_address.state }}</p>
+<p>Postal Code: {{ selected_address.postal_code }}</p>
+
+<p>Please review your order and delivery address.</p>
+
+<!-- Place Order will be connected to the order view later -->
+<form method="POST" action="{% url 'checkout' %}">
+    {% csrf_token %}
+    <input type="hidden" name="confirmed_address_id" value="{{ selected_address.id }}">
+    <button type="submit" name="place_order">
+        Place Order
+    </button>
+</form>
+
+{% else %}
+
+<!-- Address Selection Form -->
+<h2>Delivery Address</h2>
+
+<form method="POST">
+    {% csrf_token %}
+
+    <h3>Choose a Saved Address</h3>
+
+    {% for address in addresses %}
+    <div>
+        <label>
+            <input type="radio" name="address_id" value="{{ address.id }}" {%if forloop.first %} checked {% endif %}>
+            {{ address.full_name }},
+            {{ address.address_line }},
+            {{ address.city }},
+            {{ address.state }} -
+            {{ address.postal_code }}
+        </label>
+    </div>
+    {% empty %}
+    <p>You have no saved addresses yet.</p>
+    {% endfor %}
+
+    <label>
+        <input type="radio" name="address_id" value="new">
+        Enter a new address
+    </label>
+
+    <p>
+        Leave the saved address unselected to enter a new one.
+    </p>
+
+    <div>
+        <label for="full_name">Full Name</label>
+        <input type="text" id="full_name" name="full_name">
+    </div>
+
+    <div>
+        <label for="address_line">Address</label>
+        <textarea id="address_line" name="address_line"></textarea>
+    </div>
+
+    <div>
+        <label for="city">City</label>
+        <input type="text" id="city" name="city">
+    </div>
+
+    <div>
+        <label for="state">State</label>
+        <input type="text" id="state" name="state">
+    </div>
+
+    <div>
+        <label for="postal_code">Postal Code</label>
+        <input type="text" id="postal_code" name="postal_code" maxlength="6">
+    </div>
+
+    <br>
+
+    <button type="submit">Confirm Address</button>
+</form>
+
+{% endif %}
+
+{% else %}
+<p>Add products to your cart before checking out.</p>
+<a href="{% url 'products' %}">Continue Shopping</a>
+{% endif %}
+
+{% endblock %}
