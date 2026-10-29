@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+
+{% block title %}Checkout{% endblock %}
+
+{% block content %}
+<h1>My Orders</h1>
+
+{% for order in orders %}
+<div>
+    <h3>Order #{{ order.id }}</h3>
+    <p>Date: {{ order.created_at }}</p>
+    <p>Total: ₹{{ order.total_amount }}</p>
+    <p>Status: {{ order.status }}</p>
+</div>
+<a href="{% url 'order_details' order.id %}">
+    View Details
+</a>
+<hr>
+{% empty %}
+<p>You haven't placed any orders yet.</p>
+{% endfor %}
+
+{% endblock %}

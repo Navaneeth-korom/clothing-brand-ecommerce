@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+
+{% block title %}Checkout{% endblock %}
+
+{% block content %}
+<h1>Order Details</h1>
+
+<h2>Order #{{ order.id }}</h2>
+<p><strong>Order Date:</strong> {{ order.created_at }}</p>
+<p><strong>Status:</strong> {{ order.status }}</p>
+
+<hr>
+
+<h2>Delivery Address</h2>
+<p>{{ order.address.full_name }}</p>
+<p>{{ order.address.address_line }}</p>
+<p>{{ order.address.city }}, {{ order.address.state }}</p>
+<p>{{ order.address.postal_code }}</p>
+
+<hr>
+
+<h2>Ordered Items</h2>
+
+{% for item in order_items %}
+<div>
+    <h3>{{ item.product_name }}</h3>
+    <p>Price: ₹{{ item.price }}</p>
+    <p>Quantity: {{ item.quantity }}</p>
+    <p>Subtotal: ₹{{ item.total_price|floatformat:2 }}</p>
+</div>
+<hr>
+{% empty %}
+<p>No items found for this order.</p>
+{% endfor %}
+
+<h2>Total Amount: ₹{{ order.total_amount }}</h2>
+
+<a href="{% url 'my_orders' %}">Back to My Orders</a>
+{% endblock %}

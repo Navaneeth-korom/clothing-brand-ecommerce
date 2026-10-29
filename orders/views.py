@@ -188,8 +188,19 @@ def place_order(request):
         
         return render(request, "orders/confirmed-order.html",{"order": order})
 
+@login_required
+def my_orders(request):
+    orders = Order.objects.filter(user=request.user).order_by("-created_at")
+    return render(request, "orders/my-orders.html", {"orders":orders})
 
-        
-
+@login_required
+def order_details(request, order_id):
+    order = get_object_or_404(Order, id=order_id, user=request.user)
+    order_items = OrderItem.objects.filter(order=order)
+    context = {
+        "order":order,
+        "order_items":order_items,
+    }
+    return render(request, "orders/order-details.html", context)
 
 
