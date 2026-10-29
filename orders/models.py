@@ -27,7 +27,7 @@ class Order(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return f"order #{self.pk} - {self.user.username}"
+        return f"order {self.pk} - {self.user.username}"
 
 class OrderItem(models.Model):
     order = models.ForeignKey(

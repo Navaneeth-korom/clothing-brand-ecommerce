@@ -76,7 +76,7 @@
                 <p>Postal code: {{ selected_address.postal_code }}</p>
             </div>
             <p class="checkout-hint">Please review your order and delivery address.</p>
-            <form method="POST" action="{% url 'checkout' %}">
+            <form method="POST" action="{% url 'place_order' %}">
                 {% csrf_token %}
                 <input type="hidden" name="confirmed_address_id" value="{{ selected_address.id }}">
                 <button class="checkout-button" type="submit" name="place_order">Place order</button>
