@@ -4,6 +4,7 @@ from django.contrib.auth.decorators import login_required
 from .models import Cart, CartItem, Order, OrderItem
 from products.models import Product
 from accounts.models import Address
+from django.db import transaction
 
 
 @login_required
@@ -161,28 +162,29 @@ def place_order(request):
         selected_address = get_object_or_404(Address, id=address_id, user=request.user)
         cart = get_object_or_404(Cart, user=request.user)
         cart_items = CartItem.objects.filter(cart= cart)
-        for item in cart_items:
-            if item.quantity > item.product.stock:
-                messages.error(request, "Unavailable Quantity", extra_tags="place_order")
-                return redirect("cart")
-        total_amount = sum(item.product.price * item.quantity for item in cart_items)
-        order = Order.objects.create(
-            user=request.user,
-            address=selected_address,
-            total_amount= total_amount 
-        )
-
-        for item in cart_items:
-            order_item = OrderItem.objects.create(
-                order=order,
-                product=item.product,
-                product_name=item.product.name,
-                price=item.product.price,
-                quantity=item.quantity
+        with transaction.atomic():
+            for item in cart_items:
+                if item.quantity > item.product.stock:
+                    messages.error(request, "Unavailable Quantity", extra_tags="place_order")
+                    return redirect("cart")
+            total_amount = sum(item.product.price * item.quantity for item in cart_items)
+            order = Order.objects.create(
+                user=request.user,
+                address=selected_address,
+                total_amount= total_amount 
             )
-            item.product.stock = item.product.stock - item.quantity
-            item.product.save()
-        cart_items.delete()
+
+            for item in cart_items:
+                order_item = OrderItem.objects.create(
+                    order=order,
+                    product=item.product,
+                    product_name=item.product.name,
+                    price=item.product.price,
+                    quantity=item.quantity
+                )
+                item.product.stock = item.product.stock - item.quantity
+                item.product.save()
+            cart_items.delete()
         
         return render(request, "orders/confirmed-order.html",{"order": order})
 
