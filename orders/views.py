@@ -203,4 +203,24 @@ def order_details(request, order_id):
     }
     return render(request, "orders/order-details.html", context)
 
+@login_required
+def cancel_order(request, order_id):
+    if request.method != "POST":
+        return redirect("my_orders")
+    order = get_object_or_404(Order, id=order_id, user=request.user)
+    with transaction.atomic():
+        if order.status == "Pending" or order.status == "Processing":
+            for item in order.items.all():
+                product = item.product
+                product.stock += item.quantity
+                product.save()
+            order.status = "Cancelled"
+            order.save()
+            messages.success(request, "Order cancelled successfully.", extra_tags="my_orders")
+        else:
+            messages.error(request, f"{order.status} cannot be cancelled.", extra_tags="my_orders")
+    return redirect("my_orders")
+
+
+
 

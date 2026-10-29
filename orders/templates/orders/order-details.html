@@ -23,7 +23,7 @@
 
 {% for item in order_items %}
 <div>
-    <h3>{{ item.product_name }}</h3>
+    <h3>{{ item.product.name }}</h3>
     <p>Price: ₹{{ item.price }}</p>
     <p>Quantity: {{ item.quantity }}</p>
     <p>Subtotal: ₹{{ item.total_price|floatformat:2 }}</p>

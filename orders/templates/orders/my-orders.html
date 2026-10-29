@@ -15,6 +15,12 @@
 <a href="{% url 'order_details' order.id %}">
     View Details
 </a>
+{% if order.status == "Pending" or order.status == "Processing"%}
+<form method="post" action="{% url 'cancel_order' order.id %}">
+    {% csrf_token %}
+    <button type="submit">Cancel</button>
+</form>
+{% endif %}
 <hr>
 {% empty %}
 <p>You haven't placed any orders yet.</p>
