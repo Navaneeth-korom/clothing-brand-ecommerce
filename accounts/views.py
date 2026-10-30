@@ -5,6 +5,8 @@ from django.contrib.auth import login, logout, authenticate
 
 # Create your views here.
 def register(request):
+    if request.user.is_authenticated:
+        return redirect("products")
     if request.method == "POST":
         form = RegisterForm(request.POST)
         if form.is_valid():
@@ -16,6 +18,8 @@ def register(request):
     return render(request, "accounts/register.html", {"form":form})
 
 def user_login(request):
+    if request.user.is_authenticated:
+        return redirect("products")
     if request.method == "POST":
         username = request.POST.get("username")
         password = request.POST.get("password")
