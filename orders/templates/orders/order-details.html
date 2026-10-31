@@ -1,39 +1,56 @@
 {% extends "base.html" %}
 
-{% block title %}Checkout{% endblock %}
+{% block title %}Order Details{% endblock %}
 
 {% block content %}
-<h1>Order Details</h1>
+<main class="order-page order-details-page">
+    <header class="order-page-header">
+        <p class="order-eyebrow">Account / Orders</p>
+        <h1>Order Details</h1>
+    </header>
 
-<h2>Order #{{ order.id }}</h2>
-<p><strong>Order Date:</strong> {{ order.created_at }}</p>
-<p><strong>Status:</strong> {{ order.status }}</p>
+    <section class="order-panel">
+        <div class="order-panel-heading">
+            <h2>Order #{{ order.id }}</h2>
+            <span class="order-status">{{ order.status }}</span>
+        </div>
+        <div class="order-info-grid">
+            <p><strong>Order Date</strong><span>{{ order.created_at }}</span></p>
+        </div>
+    </section>
 
-<hr>
+    <section class="order-panel">
+        <h2>Delivery Address</h2>
+        <address class="order-address">
+            <strong>{{ order.address.full_name }}</strong>
+            <span>{{ order.address.address_line }}</span>
+            <span>{{ order.address.city }}, {{ order.address.state }}</span>
+            <span>{{ order.address.postal_code }}</span>
+        </address>
+    </section>
 
-<h2>Delivery Address</h2>
-<p>{{ order.address.full_name }}</p>
-<p>{{ order.address.address_line }}</p>
-<p>{{ order.address.city }}, {{ order.address.state }}</p>
-<p>{{ order.address.postal_code }}</p>
+    <section class="order-panel">
+        <h2>Ordered Items</h2>
+        <div class="ordered-items">
+            {% for item in order_items %}
+            <article class="ordered-item">
+                <h3>{{ item.product.name }}</h3>
+                <div class="ordered-item-pricing">
+                    <p><span>Price</span><strong>₹{{ item.price }}</strong></p>
+                    <p><span>Quantity</span><strong>{{ item.quantity }}</strong></p>
+                    <p><span>Subtotal</span><strong>₹{{ item.total_price|floatformat:2 }}</strong></p>
+                </div>
+            </article>
+            {% empty %}
+            <p class="order-empty-inline">No items found for this order.</p>
+            {% endfor %}
+        </div>
+        <div class="order-total">
+            <span>Total Amount</span>
+            <strong>₹{{ order.total_amount }}</strong>
+        </div>
+    </section>
 
-<hr>
-
-<h2>Ordered Items</h2>
-
-{% for item in order_items %}
-<div>
-    <h3>{{ item.product.name }}</h3>
-    <p>Price: ₹{{ item.price }}</p>
-    <p>Quantity: {{ item.quantity }}</p>
-    <p>Subtotal: ₹{{ item.total_price|floatformat:2 }}</p>
-</div>
-<hr>
-{% empty %}
-<p>No items found for this order.</p>
-{% endfor %}
-
-<h2>Total Amount: ₹{{ order.total_amount }}</h2>
-
-<a href="{% url 'my_orders' %}">Back to My Orders</a>
+    <a class="order-back-link" href="{% url 'my_orders' %}">Back to My Orders</a>
+</main>
 {% endblock %}

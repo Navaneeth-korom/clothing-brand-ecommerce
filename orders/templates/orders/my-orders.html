@@ -1,29 +1,38 @@
 {% extends "base.html" %}
 
-{% block title %}Checkout{% endblock %}
+{% block title %}My Orders{% endblock %}
 
 {% block content %}
-<h1>My Orders</h1>
+<main class="order-page orders-page">
+    <header class="order-page-header">
+        <p class="order-eyebrow">Account</p>
+        <h1>My Orders</h1>
+    </header>
 
-{% for order in orders %}
-<div>
-    <h3>Order #{{ order.id }}</h3>
-    <p>Date: {{ order.created_at }}</p>
-    <p>Total: ₹{{ order.total_amount }}</p>
-    <p>Status: {{ order.status }}</p>
-</div>
-<a href="{% url 'order_details' order.id %}">
-    View Details
-</a>
-{% if order.status == "Pending" or order.status == "Processing"%}
-<form method="post" action="{% url 'cancel_order' order.id %}">
-    {% csrf_token %}
-    <button type="submit">Cancel</button>
-</form>
-{% endif %}
-<hr>
-{% empty %}
-<p>You haven't placed any orders yet.</p>
-{% endfor %}
-
+    <div class="order-list">
+        {% for order in orders %}
+        <article class="order-card">
+            <div class="order-card-heading">
+                <h2>Order #{{ order.id }}</h2>
+                <span class="order-status">{{ order.status }}</span>
+            </div>
+            <div class="order-card-meta">
+                <p><span>Date</span><strong>{{ order.created_at }}</strong></p>
+                <p><span>Total</span><strong>₹{{ order.total_amount }}</strong></p>
+            </div>
+            <div class="order-card-actions">
+                <a class="order-button order-button-secondary" href="{% url 'order_details' order.id %}">View Details</a>
+                {% if order.status == "Pending" or order.status == "Processing"%}
+                <form method="post" action="{% url 'cancel_order' order.id %}">
+                    {% csrf_token %}
+                    <button class="order-button order-cancel-button" type="submit">Cancel Order</button>
+                </form>
+                {% endif %}
+            </div>
+        </article>
+        {% empty %}
+        <p class="order-empty">You haven't placed any orders yet.</p>
+        {% endfor %}
+    </div>
+</main>
 {% endblock %}
