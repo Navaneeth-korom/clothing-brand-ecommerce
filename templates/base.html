@@ -4,14 +4,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#1f1d1b">
     <link rel="stylesheet" href="{% static 'css/style.css' %}">
-    <title>{% block title %} FASHION STORE{% endblock %}</title>
+    <title>{% block title %}FASHION STORE{% endblock %}</title>
 </head>
 <body>
     {% include "navbar.html" %}
-    {% block content %} 
-    
-    {% endblock %}
+    <main class="page-content">
+        {% block content %}{% endblock %}
+    </main>
 </body>
-
 </html>
