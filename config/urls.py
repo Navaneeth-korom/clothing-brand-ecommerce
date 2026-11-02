@@ -23,11 +23,12 @@ from . import views
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', views.home, name="home"),
+    path('contact/', views.contact_us, name="contact"),
     path('accounts/', include('accounts.urls')),
     path('products/', include('products.urls')),
     path('orders/', include('orders.urls')),
 ]
-
+   
 
 if settings.DEBUG:
     urlpatterns += static(
