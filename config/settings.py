@@ -171,8 +171,5 @@ if not DEBUG:
         },
     }
 
-from django.core.files.storage import storages
 
-print("PRODUCTION DEBUG:", DEBUG)
-print("ACTIVE MEDIA STORAGE:", storages["default"].__class__)
 
