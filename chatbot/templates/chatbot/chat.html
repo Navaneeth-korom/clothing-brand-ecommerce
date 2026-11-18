@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Chat with us | Lumina{% endblock %}
+{% block extra_head %}
+    <link rel="stylesheet" href="{% static 'css/chatbot_style.css' %}">
+    <script src="{% static 'js/script.js' %}" defer></script>
+{% endblock %}
+
+{% block content %}
+<section class="chat-page">
+    <header class="chat-intro">
+        <p class="chat-eyebrow">Lumina customer care</p>
+        <h1>How can we help?</h1>
+        <p>Ask us about your order, our collections, or finding the right look.</p>
+    </header>
+
+    <section class="chat" aria-label="Customer support chat">
+        <header class="chat-header">
+            <div class="brand-mark" aria-hidden="true">L</div>
+            <div class="header-copy">
+                <h2>Support assistant</h2>
+                <p class="availability">Here to help</p>
+            </div>
+        </header>
+
+        <section class="conversation" id="conversation" aria-label="Conversation" aria-live="polite">
+            <div class="message-row">
+                <span class="assistant-avatar" aria-hidden="true">L</span>
+                <div class="message">Hi there! I'm your support assistant. What can I help you with today?</div>
+            </div>
+        </section>
+
+        <div class="composer-wrap">
+            <form class="composer" id="chat-form" action="{% url 'get_response' %}" method="post">
+                {% csrf_token %}
+                <label class="sr-only" for="message-input">Your message</label>
+                <input id="message-input" name="message" type="text" placeholder="Type your message..."
+                    autocomplete="off" maxlength="2000" required>
+                <button class="send-button" id="send-button" type="submit" aria-label="Send message">
+                    <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                        <path d="M21 3 10.8 13.2M21 3l-6.5 18-3.7-7.8L3 9.5 21 3Z" stroke="currentColor"
+                            stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" />
+                    </svg>
+                </button>
+            </form>
+            <p class="hint">Press Enter to send</p>
+            <p class="sr-only" id="request-status" role="status"></p>
+        </div>
+    </section>
+</section>
+{% endblock %}
